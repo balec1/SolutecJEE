@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -36,8 +37,10 @@
                                 <input type ="submit" name="btnOK" value="OK" class="btn btn-primary"/>
                             </fieldset>
                         </form>
-                        <span style="color:red">   
-                            <%
+                        <span style="color:red"> 
+                            
+                            
+                           <%--  <%
 
                                 String erreur = (String) request.getAttribute("cleErreur");
                                 if (erreur != null) {
@@ -46,7 +49,11 @@
                                 }
 
 
-                            %>
+                            %> --%>
+                            
+                            <c:if test="${!empty cleErreur}">
+                                <c:out value="${cleErreur}" />
+                                </c:if>
                         </span>
                     </div>
                 </div>
