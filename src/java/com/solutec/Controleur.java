@@ -37,43 +37,41 @@ public class Controleur extends HttpServlet {
         HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             String messageErreur;
-   
+
             ArrayList<UtilisateurBean> listeId = new ArrayList<UtilisateurBean>();
             String status = (String) session.getAttribute("cleConnecte");
-            
 
-                String entreeLogin = request.getParameter("chLogin");
-                String entreePwd = request.getParameter("chPwd");
-                if (entreeLogin != null && entreePwd != null) {
-                    ConnectionDB cdb = new ConnectionDB();
+            String entreeLogin = request.getParameter("chLogin");
+            String entreePwd = request.getParameter("chPwd");
+            if (entreeLogin != null && entreePwd != null) {
+                ConnectionDB cdb = new ConnectionDB();
 
-                    listeId = cdb.getIdentifiants(); //on recupère le contenu de la table identifiants dans une ArrayList
+                listeId = cdb.getIdentifiants(); //on recupère le contenu de la table identifiants dans une ArrayList
 
-                    //pour chaque entrée de la table Identifiants, on compare avec les entrées de l'utilisateur
-                    for (UtilisateurBean e : listeId) {
-          
-                        if (e.getLogin().equals(entreeLogin) && e.getPassword().equals(entreePwd)) {
+                //pour chaque entrée de la table Identifiants, on compare avec les entrées de l'utilisateur
+                for (UtilisateurBean e : listeId) {
 
-                            session.setAttribute("cleConnecte", "isConnected");
-                            request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+                    if (e.getLogin().equals(entreeLogin) && e.getPassword().equals(entreePwd)) {
 
-                        }
+                        session.setAttribute("cleConnecte", "isConnected");
+                        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
 
                     }
-                    if (request.getParameter("chLogin").isEmpty() || request.getParameter("chPwd").isEmpty()) {
-                        messageErreur = "Renseignez les deux champs";
-                        request.setAttribute("cleErreur", messageErreur);
-                    } else {
-                        messageErreur = "Les champs renseignés ne sont pas corrects";
-                        request.setAttribute("cleErreur", messageErreur);
-                    }
-                    //on indique que l'user n'a pas réussi à se connecter,
-                    //l'info est lise dans accueil.jsp
 
-                    request.getRequestDispatcher("accueil.jsp").forward(request, response);
                 }
+                if (request.getParameter("chLogin").isEmpty() || request.getParameter("chPwd").isEmpty()) {
+                    messageErreur = "Renseignez les deux champs";
+                    request.setAttribute("cleErreur", messageErreur);
+                } else {
+                    messageErreur = "Les champs renseignés ne sont pas corrects";
+                    request.setAttribute("cleErreur", messageErreur);
+                }
+                //on indique que l'user n'a pas réussi à se connecter,
+                //l'info est lise dans accueil.jsp
 
-          
+                request.getRequestDispatcher("accueil.jsp").forward(request, response);
+            }
+
             ConnectionDB cdb2 = new ConnectionDB();
             String idm = (String) session.getAttribute("cleIdModifier");
 
@@ -81,54 +79,80 @@ public class Controleur extends HttpServlet {
             String id = request.getParameter("idClient");
 
             if (btn != null) {
-                if (btn.equals("Supprimer")) {
-                    int nbSuppr = cdb2.supprimerEntree(id);
-
-                } else if (btn.equals("Details")) {
-                    EmployeBean u = new EmployeBean();
-
-                    u = cdb2.getSpecificEmploye(id);
-                    request.setAttribute("cleEmploye", u);
-                    request.setAttribute("cleIdModifier", id);
-                    request.getRequestDispatcher("details.jsp").forward(request, response);
-                } else if (btn.equals("Voir liste")) {
-                    request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
-                } else if (btn.equals("Modifier")) {
-                    //extraction des données de la page details.jsp
-
-                    ArrayList<String> listeModif = new ArrayList<String>();
-                    listeModif.add(request.getParameter("nom"));
-                    listeModif.add(request.getParameter("prenom"));
-                    listeModif.add(request.getParameter("teldom"));
-                    listeModif.add(request.getParameter("telpor"));
-                    listeModif.add(request.getParameter("telpro"));
-                    listeModif.add(request.getParameter("adresse"));
-                    listeModif.add(request.getParameter("cp"));
-                    listeModif.add(request.getParameter("ville"));
-                    listeModif.add(request.getParameter("mail"));
-
-                    cdb2.modifierEmploye(listeModif, idm);
-                    request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+                switch (btn) {
+                    case ("Supprimer"):
+                        int nbSuppr = cdb2.supprimerEntree(id);
+                        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+                    case ("Details"):
+                        EmployeBean u = new EmployeBean();
+                        u = cdb2.getSpecificEmploye(id);
+                        request.setAttribute("cleEmploye", u);
+                        request.setAttribute("cleIdModifier", id);
+                        request.getRequestDispatcher("details.jsp").forward(request, response);
+                    case ("Voir liste"):
+                        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+                    case ("Modifier"):
+                        ArrayList<String> listeModif = new ArrayList<String>();
+                        listeModif.add(request.getParameter("nom"));
+                        listeModif.add(request.getParameter("prenom"));
+                        listeModif.add(request.getParameter("teldom"));
+                        listeModif.add(request.getParameter("telpor"));
+                        listeModif.add(request.getParameter("telpro"));
+                        listeModif.add(request.getParameter("adresse"));
+                        listeModif.add(request.getParameter("cp"));
+                        listeModif.add(request.getParameter("ville"));
+                        listeModif.add(request.getParameter("mail"));
+                        cdb2.modifierEmploye(listeModif, idm);
+                        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
                 }
+//                if (btn.equals("Supprimer")) {
+//                    int nbSuppr = cdb2.supprimerEntree(id);
+//
+//                } else if (btn.equals("Details")) {
+//                    EmployeBean u = new EmployeBean();
+//
+//                    u = cdb2.getSpecificEmploye(id);
+//                    request.setAttribute("cleEmploye", u);
+//                    request.setAttribute("cleIdModifier", id);
+//                    request.getRequestDispatcher("details.jsp").forward(request, response);
+//            } else if (btn.equals("Voir liste")) {
+//                request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+//            } else if (btn.equals("Modifier")) {
+                //extraction des données de la page details.jsp
 
-            }
-
-            request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+//                ArrayList<String> listeModif = new ArrayList<String>();
+//                listeModif.add(request.getParameter("nom"));
+//                listeModif.add(request.getParameter("prenom"));
+//                listeModif.add(request.getParameter("teldom"));
+//                listeModif.add(request.getParameter("telpor"));
+//                listeModif.add(request.getParameter("telpro"));
+//                listeModif.add(request.getParameter("adresse"));
+//                listeModif.add(request.getParameter("cp"));
+//                listeModif.add(request.getParameter("ville"));
+//                listeModif.add(request.getParameter("mail"));
+//
+//                cdb2.modifierEmploye(listeModif, idm);
+//                request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+//            }
 
         }
-    }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
+
+    }
+}
+
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+/**
+ * Handles the HTTP <code>GET</code> method.
+ *
+ * @param request servlet request
+ * @param response servlet response
+ * @throws ServletException if a servlet-specific error occurs
+ * @throws IOException if an I/O error occurs
+ */
+@Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
 
@@ -143,7 +167,7 @@ public class Controleur extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -154,7 +178,7 @@ public class Controleur extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+        public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
