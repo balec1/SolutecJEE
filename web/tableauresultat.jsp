@@ -37,45 +37,50 @@
                         </thead>
                         </tr>
 
-                        <%  ConnectionDB cdb = new ConnectionDB();
-                            ArrayList<EmployeBean> listeEmployes = new ArrayList<EmployeBean>();
-                            listeEmployes = cdb.getEmployes();
-                            for (int i = 0; i < listeEmployes.size(); i++) {
-                                EmployeBean e;
-                                e = listeEmployes.get(i);
+                        <%
+
+
+//                            ArrayList<EmployeBean> listeEmployes = (ArrayList) request.getAttribute("cleListeEmp");
+//                            for (int i = 0; i < listeEmployes.size(); i++) {
+//                                EmployeBean e;
+//                                e = listeEmployes.get(i);
 
                         %>
-                        <tr>
-                            <td><INPUT TYPE="radio" NAME="idClient" VALUE="<% out.print(e.getId());%>"CHECKED ></td>
-                            <td><%out.print(e.getNom());%></td>
-                            <td> <%out.print(e.getPrenom());%></td>
-                            <td><%out.print(e.getTeldom());%></td>
-                            <td><%out.print(e.getTelport());%></td>
-                            <td><%out.print(e.getTelpro());%></td>
-                            <td><%out.print(e.getAdresse());%></td>
-                            <td><%out.print(e.getCodepostal());%></td>
-                            <td> <%out.print(e.getVille());%></td>
-                            <td><%out.print(e.getEmail());%></td>
+                   
+                        <c:forEach items="${cleListeEmp}" var="employe">  
+                            <tr> 
+                              <td><INPUT TYPE="radio" NAME="idClient" value="${employe.id}"  CHECKED > 
+         
+                              </td>                                
+                                <td>${employe.nom}</td>
+                                <td> ${employe.prenom}</td>
+                                <td>${employe.teldom}</td>
+                                <td>${employe.telport}</td>
+                                <td>${employe.telpro}</td>
+                                <td>${employe.adresse}</td>
+                                <td>${employe.codepostal}</td>
+                                <td>${employe.ville}</td>
+                                <td>${employe.email}</td>
 
-                        </tr>
+                            </tr>
+                        </c:forEach>
 
-
-                        <%      }
+                        <% //   }
 
                         %>
 
                         <%                    // ECRITURE DU TABLEAU DANS UNE METHODE
-        //                    ConnectionDB cdb = new ConnectionDB();
-        //                    ArrayList<UtilisateurBean> listeUtilisateurs = new ArrayList<UtilisateurBean>();
-        //                    listeUtilisateurs = cdb.getEmployes();
-        //                    for (int i = 0; i < listeUtilisateurs.size(); i++) {
-        //                        UtilisateurBean u;
-        //                        u= listeUtilisateurs.get(i);
-        //                    
-        //                        String str=u.ajouterEntreeUtilisateur();
-        //                        out.print(str);
-        //                    }
-                        %>
+                            //                    ConnectionDB cdb = new ConnectionDB();
+                            //                    ArrayList<UtilisateurBean> listeUtilisateurs = new ArrayList<UtilisateurBean>();
+                            //                    listeUtilisateurs = cdb.getEmployes();
+                            //                    for (int i = 0; i < listeUtilisateurs.size(); i++) {
+                            //                        UtilisateurBean u;
+                            //                        u= listeUtilisateurs.get(i);
+                            //                    
+                            //                        String str=u.ajouterEntreeUtilisateur();
+                            //                        out.print(str);
+                            //                    }
+%>
 
                     </table>
                     <br>

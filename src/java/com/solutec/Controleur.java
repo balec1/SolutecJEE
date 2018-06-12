@@ -35,25 +35,30 @@ public class Controleur extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+         ArrayList<EmployeBean> listeEmployes;
         try (PrintWriter out = response.getWriter()) {
             String messageErreur;
 
             ArrayList<UtilisateurBean> listeId = new ArrayList<UtilisateurBean>();
-            String status = (String) session.getAttribute("cleConnecte");
+      ConnectionDB cdb = new ConnectionDB();
 
             String entreeLogin = request.getParameter("chLogin");
             String entreePwd = request.getParameter("chPwd");
             if (entreeLogin != null && entreePwd != null) {
-                ConnectionDB cdb = new ConnectionDB();
+          
+                // CREATION DE LA LISTE EMPLOYES  
+               listeEmployes = new ArrayList<EmployeBean>();
+                listeEmployes = cdb.getEmployes();   
 
+                request.setAttribute("cleListeEmp", listeEmployes);
                 listeId = cdb.getIdentifiants(); //on recupère le contenu de la table identifiants dans une ArrayList
 
                 //pour chaque entrée de la table Identifiants, on compare avec les entrées de l'utilisateur
-                for (UtilisateurBean e : listeId) {
+                for (UtilisateurBean u : listeId) {
 
-                    if (e.getLogin().equals(entreeLogin) && e.getPassword().equals(entreePwd)) {
+                    if (u.getLogin().equals(entreeLogin) && u.getPassword().equals(entreePwd)) {
 
-                        session.setAttribute("cleConnecte", "isConnected");
+   
                         request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
 
                     }
@@ -72,7 +77,7 @@ public class Controleur extends HttpServlet {
                 request.getRequestDispatcher("accueil.jsp").forward(request, response);
             }
 
-            ConnectionDB cdb2 = new ConnectionDB();
+         
             String idm = (String) session.getAttribute("cleIdModifier");
 
             String btn = request.getParameter("bouton");
@@ -81,15 +86,19 @@ public class Controleur extends HttpServlet {
             if (btn != null) {
                 switch (btn) {
                     case ("Supprimer"):
-                        int nbSuppr = cdb2.supprimerEntree(id);
+                        int nbSuppr = cdb.supprimerEntree(id);
+                         listeEmployes = cdb.getEmployes();  
+                         request.setAttribute("cleListeEmp", listeEmployes);
                         request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
                     case ("Details"):
                         EmployeBean u = new EmployeBean();
-                        u = cdb2.getSpecificEmploye(id);
+                        u = cdb.getSpecificEmploye(id);
                         request.setAttribute("cleEmploye", u);
-                        request.setAttribute("cleIdModifier", id);
+                        session.setAttribute("cleIdModifier", id);
                         request.getRequestDispatcher("details.jsp").forward(request, response);
                     case ("Voir liste"):
+                        listeEmployes = cdb.getEmployes();  
+                         request.setAttribute("cleListeEmp", listeEmployes);
                         request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
                     case ("Modifier"):
                         ArrayList<String> listeModif = new ArrayList<String>();
@@ -102,7 +111,9 @@ public class Controleur extends HttpServlet {
                         listeModif.add(request.getParameter("cp"));
                         listeModif.add(request.getParameter("ville"));
                         listeModif.add(request.getParameter("mail"));
-                        cdb2.modifierEmploye(listeModif, idm);
+                        cdb.modifierEmploye(listeModif, idm);
+                        listeEmployes = cdb.getEmployes();  
+                         request.setAttribute("cleListeEmp", listeEmployes);
                         request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
                 }
 //                if (btn.equals("Supprimer")) {
@@ -134,25 +145,24 @@ public class Controleur extends HttpServlet {
 //                cdb2.modifierEmploye(listeModif, idm);
 //                request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
 //            }
+            }
+
+            request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
 
         }
-
-        request.getRequestDispatcher("tableauresultat.jsp").forward(request, response);
-
     }
-}
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-/**
- * Handles the HTTP <code>GET</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
 
@@ -167,7 +177,7 @@ public class Controleur extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-        protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -178,7 +188,7 @@ public class Controleur extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-        public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

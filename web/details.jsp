@@ -6,10 +6,11 @@
 
 <%@page import="com.employe.EmployeBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% EmployeBean e = (EmployeBean) request.getAttribute("cleEmploye");
-    String id = (String) request.getAttribute("cleIdModifier");
-
-    session.setAttribute("cleIdModifier", id);
+<%
+//    EmployeBean e = (EmployeBean) request.getAttribute("cleEmploye");
+//    String id = (String) request.getAttribute("cleIdModifier");
+//
+//    session.setAttribute("cleIdModifier", id);
 %>
 
 <!DOCTYPE html>
