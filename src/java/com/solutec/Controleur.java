@@ -37,21 +37,21 @@ public class Controleur extends HttpServlet {
         HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
             String messageErreur;
-            System.out.println("dans controleur"); // TEST A ENLEVER
+   
             ArrayList<UtilisateurBean> listeId = new ArrayList<UtilisateurBean>();
             String status = (String) session.getAttribute("cleConnecte");
-            if (status != "isConnected") {
-                System.out.println("boucle connectee"); // TEST A ENLEVER
+            
+
                 String entreeLogin = request.getParameter("chLogin");
                 String entreePwd = request.getParameter("chPwd");
                 if (entreeLogin != null && entreePwd != null) {
                     ConnectionDB cdb = new ConnectionDB();
-System.out.println("dans bloucle non null"); // TEST A ENELVER
+
                     listeId = cdb.getIdentifiants(); //on recupère le contenu de la table identifiants dans une ArrayList
 
                     //pour chaque entrée de la table Identifiants, on compare avec les entrées de l'utilisateur
                     for (UtilisateurBean e : listeId) {
-                        System.out.println("dans boucle liste id"); // TEST A ENELVER
+          
                         if (e.getLogin().equals(entreeLogin) && e.getPassword().equals(entreePwd)) {
 
                             session.setAttribute("cleConnecte", "isConnected");
@@ -73,7 +73,7 @@ System.out.println("dans bloucle non null"); // TEST A ENELVER
                     request.getRequestDispatcher("accueil.jsp").forward(request, response);
                 }
 
-            }
+          
             ConnectionDB cdb2 = new ConnectionDB();
             String idm = (String) session.getAttribute("cleIdModifier");
 
@@ -88,7 +88,7 @@ System.out.println("dans bloucle non null"); // TEST A ENELVER
                     EmployeBean u = new EmployeBean();
 
                     u = cdb2.getSpecificEmploye(id);
-                    request.setAttribute("cleUtilisateur", u);
+                    request.setAttribute("cleEmploye", u);
                     request.setAttribute("cleIdModifier", id);
                     request.getRequestDispatcher("details.jsp").forward(request, response);
                 } else if (btn.equals("Voir liste")) {
