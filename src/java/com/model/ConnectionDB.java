@@ -51,7 +51,10 @@ public class ConnectionDB {
             this.dbUrl = prop.getProperty(DB_URL);
             this.dbUser = prop.getProperty(DB_USER);
             this.dbPwd = prop.getProperty(DB_PWD);
-        } catch (IOException ex) {
+            // Code ci-dessous uniquement pour le serveur d'application TomEE ou WildFly
+//            Class.forName("org.apache.derby.jdbc.ClientDriver");
+//            conn=DriverManager.getConnection(this.dbUrl,this.dbUser,this.dbPwd);
+        } catch (IOException  ex) {
             System.out.println(ex.getMessage());
         }
     }
